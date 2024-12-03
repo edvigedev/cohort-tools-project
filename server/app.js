@@ -3,6 +3,10 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
+const mongoose = require('mongoose');
+const Student = require('./models/Student.js');
+const Cohort = require('./models/Cohort.js');
+
 const PORT = 5005;
 
 // STATIC DATA
@@ -12,6 +16,33 @@ const dataStudents = require('./students.json');
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
+
+/*************
+ * MONGODB
+ *************/
+// MongoDB connection string
+const MONGO_URI = 'mongodb://localhost:27017/cohort-tools-api';
+// const MONGO_URI =
+// 	'mongodb+srv://pandau:EQ2qE65cIhiW9IkW@cat-diet-calculator.pdnkg.mongodb.net/cohort-tools-api?retryWrites=true&w=majority';
+
+mongoose.set('debug', true);
+
+// Connect to MongoDB
+mongoose
+	.connect(MONGO_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => console.log('MongoDB connected'))
+	.catch(err => console.error('MongoDB connection error:', err));
+
+app.get('/test', async (req, res) => {
+	const student = await Student.find({ firstName: 'Grace' });
+	const cohort = await Cohort.find({ campus: 'Paris' });
+	console.log('Student:', student);
+	console.log('Cohort:', cohort);
+	res.status(200).json(cohort);
+});
 
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
