@@ -1,44 +1,38 @@
 const mongoose = require('mongoose');
+const Enums = require('./enums.js');
 
-// Allowed values for program, format, and campus
-const allowedPrograms = ['Web Dev', 'UX/UI', 'Data Analytics', 'Cybersecurity'];
-const allowedFormats = ['Full Time', 'Part Time'];
-const allowedCampuses = [
-	'Madrid',
-	'Barcelona',
-	'Miami',
-	'Paris',
-	'Berlin',
-	'Amsterdam',
-	'Lisbon',
-	'Remote',
-];
-
-// Cohort Schema
+// CREATE SCHEMA
+// Schema - describes and enforces the structure of the documents
 const cohortSchema = new mongoose.Schema({
-	cohortSlug: { type: String, required: true, unique: true }, // Unique identifier for the cohort
-	cohortName: { type: String, required: true }, // Name of the cohort
+	// Required
+	cohortSlug: { type: String, required: true, unique: true },
+	cohortName: { type: String, required: true },
+	programManager: { type: String, required: true },
+	leadTeacher: { type: String, required: true },
+	// Optional
 	program: {
 		type: String,
-		enum: allowedPrograms, // Validate against allowed program values
+		enum: Enums.programs,
 	},
 	format: {
 		type: String,
-		enum: allowedFormats, // Validate against allowed format values
+		enum: Enums.formats,
 	},
 	campus: {
 		type: String,
-		enum: allowedCampuses, // Validate against allowed campus values
+		enum: Enums.campuses,
 	},
-	startDate: { type: Date, default: Date.now }, // Default to current date
-	endDate: { type: Date }, // No default, must be set explicitly
-	inProgress: { type: Boolean, default: false }, // Default: false
-	programManager: { type: String, required: true }, // Required field
-	leadTeacher: { type: String, required: true }, // Required field
-	totalHours: { type: Number, default: 360 }, // Default: 360
+	startDate: { type: Date, default: Date.now },
+	endDate: { type: Date },
+	inProgress: { type: Boolean, default: false },
+	totalHours: { type: Number, default: 360 },
 });
 
-// Export the Cohort model
+// CREATE MODEL
+// The model() method defines a model and creates a collection in MongoDB
+// The collection name will default to the lowercased, plural form of the model name:
+//                          "Cohort" --> "cohorts"
 const Cohort = mongoose.model('Cohort', cohortSchema);
 
+// EXPORT THE MODEL
 module.exports = Cohort;
