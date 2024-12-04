@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Enums = require('./enums.js');
+const { Schema, model } = mongoose;
 
 // CREATE SCHEMA
 // Schema - describes and enforces the structure of the documents
