@@ -22,8 +22,10 @@ const MONGO_URI = config.MONGO_URI;
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
 
-// DATABASE
-// MongoDB debugging logs
+/*************
+ * MONGODB
+ *************/
+// MongoDB connection string
 mongoose.set('debug', true);
 
 // Connect to MongoDB
