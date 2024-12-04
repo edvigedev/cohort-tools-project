@@ -7,6 +7,9 @@ const mongoose = require('mongoose');
 const Student = require('./models/Student.js');
 const Cohort = require('./models/Cohort.js');
 
+const studentsRoutes = require('./routes/students.routes.js');
+const cohortsRoutes = require('./routes/cohorts.routes.js');
+
 const config = require('./config.js');
 
 // LOAD ENVIRONMENT VARIABLES
@@ -15,8 +18,6 @@ const MONGO_URI = config.MONGO_URI;
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
-const dataCohorts = require('./cohorts.json');
-const dataStudents = require('./students.json');
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
@@ -56,13 +57,9 @@ app.get('/docs', (req, res) => {
 	res.sendFile(__dirname + '/views/docs.html');
 });
 
-app.get('/api/cohorts', (req, res) => {
-	res.json(dataCohorts);
-});
+app.get('/api/cohorts', cohortsRoutes);
 
-app.get('/api/students', (req, res) => {
-	res.json(dataStudents);
-});
+app.use('/api/students', studentsRoutes);
 
 // START SERVER
 app.listen(PORT, () => {
