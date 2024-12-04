@@ -1,8 +1,8 @@
-const router = require('express').Router();
-const Student = require('../models/Student.js');
+const router = require("express").Router();
+const Student = require("../models/Student.js");
 
 // POST /api/students - Creates a new student
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
 	const newStudent = {
 		firstName: req.body.firstName,
 		lastName: req.body.lastName,
@@ -15,26 +15,52 @@ router.post('/', async (req, res) => {
 		cohort: req.body.cohort,
 		projects: req.body.projects,
 	};
+
 	try {
 		const createdStudent = await Student.create(newStudent);
+
 		res
 			.status(201)
-			.json({ message: 'Student successfully created.', createdStudent });
+			.json({ message: "Student successfully created.", createdStudent });
 	} catch (error) {
-		console.error(error);
-		res
-			.status(500)
-			.json({ message: "Something went wrong. Couldn't create student." });
+		console.error("oh oh 😮: ", error.name, error);
+		console.table(error);
+
+		const errorMessage =
+			error.errorResponse?.errmsg || error.message || error._message;
+
+		if (error.name === "MongoServerError") {
+			return res.status(400).json({
+				code: error.code,
+				message: errorMessage,
+				error: error.errorResponse || error,
+			});
+		}
+
+		if (error.name === "ValidationError") {
+			return res.status(400).json({
+				code: "ValidatonError",
+				message: errorMessage,
+				error: error.errors,
+			});
+		}
+
+		res.status(500).json({
+			code: "UnknownError",
+			message:
+				"Something went wrong. Couldn't create student due to " + errorMessage,
+			error,
+		});
 	}
 });
 
 // GET /api/students - Retrieves all of the students in the database collection
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
 	try {
 		const allStudents = await Student.find({});
 		res
 			.status(200)
-			.json({ message: 'Students successfully fetched.', allStudents });
+			.json({ message: "Students successfully fetched.", allStudents });
 	} catch (error) {
 		console.error(error);
 		res
@@ -44,14 +70,14 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/students/cohort/:cohortId - Retrieves all of the students for a given cohort
-router.get('/cohort/:cohortId', async (req, res) => {
+router.get("/cohort/:cohortId", async (req, res) => {
 	const cohortId = req.params.cohortId;
 
 	try {
 		const cohortStudents = await Student.find({ cohort: cohortId });
 		res
 			.status(200)
-			.json({ message: 'Students successfully fetched.', cohortStudents });
+			.json({ message: "Students successfully fetched.", cohortStudents });
 	} catch (error) {
 		console.error(error);
 		res
@@ -61,14 +87,14 @@ router.get('/cohort/:cohortId', async (req, res) => {
 });
 
 // GET /api/students/:studentId - Retrieves a specific student by id
-router.get('/:studentId', async (req, res) => {
+router.get("/:studentId", async (req, res) => {
 	const studentId = req.params.studentId;
 
 	try {
 		const foundStudent = await Student.findById(studentId);
 		res
 			.status(200)
-			.json({ message: 'Student successfully fetched.', foundStudent });
+			.json({ message: "Student successfully fetched.", foundStudent });
 	} catch (error) {
 		console.error(error);
 		res
@@ -78,7 +104,7 @@ router.get('/:studentId', async (req, res) => {
 });
 
 // PUT /api/students/:studentId - Updates a specific student by id
-router.put('/:studentId', async (req, res) => {
+router.put("/:studentId", async (req, res) => {
 	try {
 		const updatedStudent = await Student.findByIdAndUpdate(
 			req.params.studentId,
@@ -86,7 +112,7 @@ router.put('/:studentId', async (req, res) => {
 			{ new: true }
 		);
 		res.status(200).json({
-			message: 'Student successfully updated.',
+			message: "Student successfully updated.",
 			updatedStudent,
 		});
 	} catch (error) {
@@ -98,13 +124,13 @@ router.put('/:studentId', async (req, res) => {
 });
 
 // DELETE /api/students/:studentId - Deletes a specific student by id
-router.delete('/:studentId', async (req, res) => {
+router.delete("/:studentId", async (req, res) => {
 	try {
 		const deletedStudent = await Student.findByIdAndDelete(
 			req.params.studentId
 		);
 		res.status(200).json({
-			message: 'Student successfully deleted.',
+			message: "Student successfully deleted.",
 			deletedStudent,
 		});
 	} catch (error) {
