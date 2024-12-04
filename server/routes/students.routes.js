@@ -1,8 +1,118 @@
 const router = require('express').Router();
-const dataStudents = require('../students.json');
+const Student = require('../models/Student.js');
 
-router.get('/', (req, res) => {
-	res.json(dataStudents);
+// POST /api/students - Creates a new student
+router.post('/', async (req, res) => {
+	const newStudent = {
+		firstName: req.body.firstName,
+		lastName: req.body.lastName,
+		email: req.body.email,
+		phone: req.body.phone,
+		linkedinUrl: req.body.linkedinUrl,
+		languages: req.body.languages,
+		program: req.body.program,
+		background: req.body.background,
+		cohort: req.body.cohort,
+		projects: req.body.projects,
+	};
+	try {
+		const createdStudent = await Student.create(newStudent);
+		res
+			.status(201)
+			.json({ message: 'Student successfully created.', createdStudent });
+	} catch (error) {
+		console.error(error);
+		res
+			.status(500)
+			.json({ message: "Something went wrong. Couldn't create student." });
+	}
+});
+
+// GET /api/students - Retrieves all of the students in the database collection
+router.get('/', async (req, res) => {
+	try {
+		const allStudents = await Student.find({});
+		res
+			.status(200)
+			.json({ message: 'Students successfully fetched.', allStudents });
+	} catch (error) {
+		console.error(error);
+		res
+			.status(500)
+			.json({ message: "Something went wrong. Couldn't fetch students." });
+	}
+});
+
+// GET /api/students/cohort/:cohortId - Retrieves all of the students for a given cohort
+router.get('/cohort/:cohortId', async (req, res) => {
+	const cohortId = req.params.cohortId;
+
+	try {
+		const cohortStudents = await Student.find({ cohort: cohortId });
+		res
+			.status(200)
+			.json({ message: 'Students successfully fetched.', cohortStudents });
+	} catch (error) {
+		console.error(error);
+		res
+			.status(500)
+			.json({ message: "Something went wrong. Couldn't fetch students." });
+	}
+});
+
+// GET /api/students/:studentId - Retrieves a specific student by id
+router.get('/:studentId', async (req, res) => {
+	const studentId = req.params.studentId;
+
+	try {
+		const foundStudent = await Student.findById(studentId);
+		res
+			.status(200)
+			.json({ message: 'Student successfully fetched.', foundStudent });
+	} catch (error) {
+		console.error(error);
+		res
+			.status(500)
+			.json({ message: "Something went wrong. Couldn't fetch student." });
+	}
+});
+
+// PUT /api/students/:studentId - Updates a specific student by id
+router.put('/:studentId', async (req, res) => {
+	try {
+		const updatedStudent = await Student.findByIdAndUpdate(
+			req.params.studentId,
+			req.body,
+			{ new: true }
+		);
+		res.status(200).json({
+			message: 'Student successfully updated.',
+			updatedStudent,
+		});
+	} catch (error) {
+		console.error(error);
+		res
+			.status(500)
+			.json({ message: "Something went wrong. Couldn't update student." });
+	}
+});
+
+// DELETE /api/students/:studentId - Deletes a specific student by id
+router.delete('/:studentId', async (req, res) => {
+	try {
+		const deletedStudent = await Student.findByIdAndDelete(
+			req.params.studentId
+		);
+		res.status(200).json({
+			message: 'Student successfully deleted.',
+			deletedStudent,
+		});
+	} catch (error) {
+		console.error(error);
+		res
+			.status(500)
+			.json({ message: "Something went wrong. Couldn't delete student." });
+	}
 });
 
 module.exports = router;
