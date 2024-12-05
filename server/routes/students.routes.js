@@ -57,7 +57,8 @@ router.post("/", async (req, res) => {
 // GET /api/students - Retrieves all of the students in the database collection
 router.get("/", async (req, res) => {
 	try {
-		const allStudents = await Student.find({});
+		const allStudents = await Student.find({}).populate("cohort");
+
 		res
 			.status(200)
 			.json({ message: "Students successfully fetched.", allStudents });
@@ -74,7 +75,10 @@ router.get("/cohort/:cohortId", async (req, res) => {
 	const cohortId = req.params.cohortId;
 
 	try {
-		const cohortStudents = await Student.find({ cohort: cohortId });
+		const cohortStudents = await Student.find({ cohort: cohortId }).populate(
+			"cohort"
+		);
+
 		res
 			.status(200)
 			.json({ message: "Students successfully fetched.", cohortStudents });
@@ -91,7 +95,8 @@ router.get("/:studentId", async (req, res) => {
 	const studentId = req.params.studentId;
 
 	try {
-		const foundStudent = await Student.findById(studentId);
+		const foundStudent = await Student.findById(studentId).populate("cohort");
+
 		res
 			.status(200)
 			.json({ message: "Student successfully fetched.", foundStudent });
@@ -110,7 +115,8 @@ router.put("/:studentId", async (req, res) => {
 			req.params.studentId,
 			req.body,
 			{ new: true }
-		);
+		).populate("cohort");
+
 		res.status(200).json({
 			message: "Student successfully updated.",
 			updatedStudent,
@@ -128,7 +134,8 @@ router.delete("/:studentId", async (req, res) => {
 	try {
 		const deletedStudent = await Student.findByIdAndDelete(
 			req.params.studentId
-		);
+		).populate("cohort");
+
 		res.status(200).json({
 			message: "Student successfully deleted.",
 			deletedStudent,
