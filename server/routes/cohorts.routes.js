@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const Cohort = require("../models/Cohort");
 
+
+
 // router.get('/', (req, res) => {
 // 	res.json(dataCohorts);
 // });
@@ -28,13 +30,14 @@ router.post("/", (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
-			res.status(500).json({
-				message: `Something went wrong with creating a cohort, ${err}`,
-			});
+			// res.status(500).json({
+			// 	message: `Something went wrong with creating a cohort, ${err}`,
+			// });
+			next(err);
 		});
 });
 
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
 	console.log(req.body);
 	Cohort.find({})
 		.then((allCohort) => {
@@ -43,13 +46,14 @@ router.get("/", (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
-			res.status(404).json({
-				message: `Something went wrong with retrieving all cohorts, ${err}`,
-			});
+			// res.status(404).json({
+			// 	message: `Something went wrong with retrieving all cohorts, ${err}`,
+			// });
+			next(err);
 		});
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
 	console.log(req.body);
 	Cohort.findById(req.params.id)
 		.then((oneCohort) => {
@@ -58,9 +62,10 @@ router.get("/:id", (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
-			res.status(404).json({
-				message: `Something went wrong with retrieving a cohort, ${err}`,
-			});
+			// res.status(404).json({
+			// 	message: `Something went wrong with retrieving a cohort, ${err}`,
+			// });
+			next(err)
 		});
 });
 
@@ -73,9 +78,10 @@ router.put("/:id", (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
-			res.status(404).json({
-				message: `Something went wrong with updating a cohort, ${err}`,
-			});
+			// res.status(404).json({
+			// 	message: `Something went wrong with updating a cohort, ${err}`,
+			// });
+			next(err);
 		});
 });
 
@@ -88,9 +94,10 @@ router.delete("/:id", (req, res) => {
 		})
 		.catch((err) => {
 			console.log(err);
-			res.status(404).json({
-				message: `Something went wrong with deleting a cohort, ${err}`,
-			});
+			// res.status(404).json({
+			// 	message: `Something went wrong with deleting a cohort, ${err}`,
+			// });
+			next(err)
 		});
 });
 

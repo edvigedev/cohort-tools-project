@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Student = require("../models/Student.js");
 
 // POST /api/students - Creates a new student
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
 	const newStudent = {
 		firstName: req.body.firstName,
 		lastName: req.body.lastName,
@@ -26,36 +26,12 @@ router.post("/", async (req, res) => {
 		console.error("oh oh 😮: ", error.name, error);
 		console.table(error);
 
-		const errorMessage =
-			error.errorResponse?.errmsg || error.message || error._message;
-
-		if (error.name === "MongoServerError") {
-			return res.status(400).json({
-				code: error.code,
-				message: errorMessage,
-				error: error.errorResponse || error,
-			});
-		}
-
-		if (error.name === "ValidationError") {
-			return res.status(400).json({
-				code: "ValidatonError",
-				message: errorMessage,
-				error: error.errors,
-			});
-		}
-
-		res.status(500).json({
-			code: "UnknownError",
-			message:
-				"Something went wrong. Couldn't create student due to " + errorMessage,
-			error,
-		});
+		next(error)
 	}
 });
 
 // GET /api/students - Retrieves all of the students in the database collection
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
 	try {
 		const allStudents = await Student.find({}).populate("cohort");
 
@@ -64,14 +40,12 @@ router.get("/", async (req, res) => {
 			.json({ message: "Students successfully fetched.", allStudents });
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({ message: "Something went wrong. Couldn't fetch students." });
+		next(error)
 	}
 });
 
 // GET /api/students/cohort/:cohortId - Retrieves all of the students for a given cohort
-router.get("/cohort/:cohortId", async (req, res) => {
+router.get("/cohort/:cohortId", async (req, res, next) => {
 	const cohortId = req.params.cohortId;
 
 	try {
@@ -84,14 +58,12 @@ router.get("/cohort/:cohortId", async (req, res) => {
 			.json({ message: "Students successfully fetched.", cohortStudents });
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({ message: "Something went wrong. Couldn't fetch students." });
+		next(error)
 	}
 });
 
 // GET /api/students/:studentId - Retrieves a specific student by id
-router.get("/:studentId", async (req, res) => {
+router.get("/:studentId", async (req, res, next) => {
 	const studentId = req.params.studentId;
 
 	try {
@@ -102,14 +74,12 @@ router.get("/:studentId", async (req, res) => {
 			.json({ message: "Student successfully fetched.", foundStudent });
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({ message: "Something went wrong. Couldn't fetch student." });
+		next(error)
 	}
 });
 
 // PUT /api/students/:studentId - Updates a specific student by id
-router.put("/:studentId", async (req, res) => {
+router.put("/:studentId", async (req, res, next) => {
 	try {
 		const updatedStudent = await Student.findByIdAndUpdate(
 			req.params.studentId,
@@ -123,14 +93,12 @@ router.put("/:studentId", async (req, res) => {
 		});
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({ message: "Something went wrong. Couldn't update student." });
+		next(error)
 	}
 });
 
 // DELETE /api/students/:studentId - Deletes a specific student by id
-router.delete("/:studentId", async (req, res) => {
+router.delete("/:studentId", async (req, res, next) => {
 	try {
 		const deletedStudent = await Student.findByIdAndDelete(
 			req.params.studentId
@@ -142,9 +110,7 @@ router.delete("/:studentId", async (req, res) => {
 		});
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({ message: "Something went wrong. Couldn't delete student." });
+		next(error)
 	}
 });
 
