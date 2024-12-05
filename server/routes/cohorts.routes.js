@@ -28,13 +28,7 @@ router.post("/", (req, res) => {
 			res.status(201).json(newCohort);
 			console.log("New cohort was created", newCohort);
 		})
-		.catch((err) => {
-			console.log(err);
-			// res.status(500).json({
-			// 	message: `Something went wrong with creating a cohort, ${err}`,
-			// });
-			next(err);
-		});
+		.catch((err) => next(err));
 });
 
 router.get("/", (req, res, next) => {
@@ -44,13 +38,7 @@ router.get("/", (req, res, next) => {
 			res.status(200).json(allCohort);
 			console.log("All cohort were retrieved", allCohort);
 		})
-		.catch((err) => {
-			console.log(err);
-			// res.status(404).json({
-			// 	message: `Something went wrong with retrieving all cohorts, ${err}`,
-			// });
-			next(err);
-		});
+		.catch((err) => next(err));
 });
 
 router.get("/:id", (req, res, next) => {
@@ -60,13 +48,7 @@ router.get("/:id", (req, res, next) => {
 			res.status(200).json(oneCohort);
 			console.log("One cohort was retrieved", oneCohort);
 		})
-		.catch((err) => {
-			console.log(err);
-			// res.status(404).json({
-			// 	message: `Something went wrong with retrieving a cohort, ${err}`,
-			// });
-			next(err)
-		});
+		.catch((err) => next(err));
 });
 
 router.put("/:id", (req, res) => {
@@ -76,13 +58,7 @@ router.put("/:id", (req, res) => {
 			res.status(204).json(updatedCohort);
 			console.log("One cohort was updated", updatedCohort);
 		})
-		.catch((err) => {
-			console.log(err);
-			// res.status(404).json({
-			// 	message: `Something went wrong with updating a cohort, ${err}`,
-			// });
-			next(err);
-		});
+		.catch((err) => next(err));
 });
 
 router.delete("/:id", (req, res) => {
@@ -92,13 +68,7 @@ router.delete("/:id", (req, res) => {
 			res.status(204).json(deletedCohort);
 			console.log("One cohort was updated", deletedCohort);
 		})
-		.catch((err) => {
-			console.log(err);
-			// res.status(404).json({
-			// 	message: `Something went wrong with deleting a cohort, ${err}`,
-			// });
-			next(err)
-		});
+		.catch((err) => next(err));
 });
 
 module.exports = router;

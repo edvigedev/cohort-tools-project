@@ -23,10 +23,7 @@ router.post("/", async (req, res, next) => {
 			.status(201)
 			.json({ message: "Student successfully created.", createdStudent });
 	} catch (error) {
-		console.error("oh oh 😮: ", error.name, error);
-		console.table(error);
-
-		next(error)
+		next(error);
 	}
 });
 
@@ -39,8 +36,7 @@ router.get("/", async (req, res, next) => {
 			.status(200)
 			.json({ message: "Students successfully fetched.", allStudents });
 	} catch (error) {
-		console.error(error);
-		next(error)
+		next(error);
 	}
 });
 
@@ -57,8 +53,7 @@ router.get("/cohort/:cohortId", async (req, res, next) => {
 			.status(200)
 			.json({ message: "Students successfully fetched.", cohortStudents });
 	} catch (error) {
-		console.error(error);
-		next(error)
+		next(error);
 	}
 });
 
@@ -73,8 +68,7 @@ router.get("/:studentId", async (req, res, next) => {
 			.status(200)
 			.json({ message: "Student successfully fetched.", foundStudent });
 	} catch (error) {
-		console.error(error);
-		next(error)
+		next(error);
 	}
 });
 
@@ -84,7 +78,7 @@ router.put("/:studentId", async (req, res, next) => {
 		const updatedStudent = await Student.findByIdAndUpdate(
 			req.params.studentId,
 			req.body,
-			{ new: true }
+			{ new: true, runValidators: true }
 		).populate("cohort");
 
 		res.status(200).json({
@@ -92,8 +86,7 @@ router.put("/:studentId", async (req, res, next) => {
 			updatedStudent,
 		});
 	} catch (error) {
-		console.error(error);
-		next(error)
+		next(error);
 	}
 });
 
@@ -109,8 +102,7 @@ router.delete("/:studentId", async (req, res, next) => {
 			deletedStudent,
 		});
 	} catch (error) {
-		console.error(error);
-		next(error)
+		next(error);
 	}
 });
 

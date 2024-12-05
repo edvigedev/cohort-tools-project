@@ -2,12 +2,12 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const { errorHandler } = require("./middleware/error.js");
-
 const mongoose = require("mongoose");
 
 const studentsRoutes = require("./routes/students.routes.js");
 const cohortsRoutes = require("./routes/cohorts.routes.js");
+
+const { errorHandler, notFoundHandler } = require("./middleware/error.js");
 
 const config = require("./config.js");
 
@@ -19,14 +19,11 @@ const MONGO_URI = config.MONGO_URI;
 const app = express();
 
 // DATABASE
-// MongoDB connection string
-mongoose.set("debug", true);
-
 // Connect to MongoDB
 mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+	.connect(MONGO_URI)
+	.then(() => console.log("MongoDB connected"))
+	.catch((err) => console.error("MongoDB connection error:", err));
 
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
@@ -41,17 +38,17 @@ app.use(cookieParser());
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 app.get("/docs", (req, res) => {
-  res.sendFile(__dirname + "/views/docs.html");
+	res.sendFile(__dirname + "/views/docs.html");
 });
 
 app.use("/api/cohorts", cohortsRoutes);
 app.use("/api/students", studentsRoutes);
 
-
 //ERROR HANDLING
-// app.use(notFoundHandler); didn't use this function as errorHandler is handling all errors
+app.use(notFoundHandler);
 app.use(errorHandler);
+
 // START SERVER
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+	console.log(`Server listening on port ${PORT}`);
 });
