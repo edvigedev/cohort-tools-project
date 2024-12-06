@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 
 const studentsRoutes = require("./routes/students.routes.js");
 const cohortsRoutes = require("./routes/cohorts.routes.js");
+const userRoutes = require("./routes/user.routes.js");
+const authRoutes = require("./routes/auth.routes.js");
 
 const { errorHandler, notFoundHandler } = require("./middleware/error.js");
 
@@ -43,6 +45,8 @@ app.get("/docs", (req, res) => {
 
 app.use("/api/cohorts", cohortsRoutes);
 app.use("/api/students", studentsRoutes);
+app.use("/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 //ERROR HANDLING
 app.use(notFoundHandler);
