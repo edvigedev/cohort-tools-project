@@ -9,12 +9,12 @@ const jwt = require("jsonwebtoken");
 
 router.post("/signup", async (req, res, next) => {
 	const { email, password, name } = req.body;
-	try {
-		const emailAlreadyUsed = await User.findOne({ email });
 
-		if (emailAlreadyUsed) {
-			res.status(403).json({ message: "Email is already used" });
-		}
+	try {
+		// Check if chosen email is unique
+		const emailAlreadyUsed = await User.findOne({ email });
+		if (emailAlreadyUsed)
+			throw new Error(`Email "${email}" is already used by another user.`);
 
 		const salt = bcryptjs.genSaltSync(12);
 		const hashedPassword = bcryptjs.hashSync(password, salt);
@@ -77,12 +77,10 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.get("/verify", isAuthenticated, (req, res, next) => {
-	res
-		.status(200)
-		.json({
-			message: "All Humans must be Verified!!!",
-			currentUser: req.payLoad.currentUser,
-		});
+	res.status(200).json({
+		message: "All Humans must be Verified!!!",
+		currentUser: req.payLoad.currentUser,
+	});
 });
 
 module.exports = router;
