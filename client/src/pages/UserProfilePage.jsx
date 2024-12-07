@@ -26,7 +26,7 @@ function UserProfilePage() {
           { headers: { Authorization: `Bearer ${storedToken}` }}
           )
           .then((response) => {
-            setUserProfile(response.data);
+            setUserProfile(response.data.user);
             setLoading(false);
           })
           .catch((error) => {

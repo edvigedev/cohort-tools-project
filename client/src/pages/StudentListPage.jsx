@@ -11,10 +11,11 @@ function StudentListPage() {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/students?$`)
-      .then((response) => {
-        setStudents(response.data)})
-      .catch((error) => console.log(error));
+			.get(`${API_URL}/api/students?$`)
+			.then((response) => {
+				setStudents(response.data.allStudents);
+			})
+			.catch((error) => console.log(error));
   }, []);
 
   return (

@@ -53,8 +53,8 @@ router.post("/login", async (req, res, next) => {
 			);
 
 			if (passwordsMatch) {
-				const { _id, username } = foundUser;
-				const currentUser = { _id, username };
+				const { _id, name } = foundUser;
+				const currentUser = { _id, name };
 				const authToken = jwt.sign(currentUser, process.env.TOKEN_SECRET, {
 					algorithm: "HS256",
 					expiresIn: "1h",
