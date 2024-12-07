@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../context/auth.context";
 
 
 // Import the string from the .env with URL of the API/server - http://localhost:5005
@@ -12,6 +13,8 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [errorMessage, setErrorMessage] = useState(undefined);
+
+  const { storeToken, authenticateUser } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -31,7 +34,22 @@ function SignupPage() {
     // If the request resolves with an error, set the error message in the state
     axios.post(`${API_URL}/auth/signup`, requestBody)
       .then(() => {
-        navigate("/login");
+        // navigate("/login");
+        const requestBody = { email, password };
+
+        axios
+					.post(`${API_URL}/auth/login`, requestBody)
+					.then((response) => {
+						console.log("JWT token", response.data.authToken);
+
+						storeToken(response.data.authToken);
+						authenticateUser();
+						navigate("/");
+					})
+					.catch((error) => {
+						const errorDescription = error.response.data.message;
+						setErrorMessage(errorDescription);
+					});
       })
       .catch((error) => {
         const errorDescription = error.response.data.message;
