@@ -7,24 +7,32 @@ function errorHandler(err, req, res, next) {
 
 	// e.g. duplicate key error
 	if (err.name === "MongoServerError") {
-		return res.status(400).json({
-			code: err.code,
-			message: errorMessage,
-			error: err.errorResponse || err,
-		});
+		// duplicate key error
+		if (err.code === 11000) {
+			const { duplicateKeyValue } = err.keyValue.email;
+
+			return res.status(400).json({
+				name: err.name,
+				code: err.code,
+				message: `Email "${duplicateKeyValue}" is already used by another user.`,
+				error: err.errorResponse,
+			});
+		}
 	}
 
 	// Any Mongoose Errors, e.g. Validation Errors
 	if (err instanceof MongooseError) {
 		return res.status(400).json({
-			code: err.name,
+			name: err.name,
+			code: undefined,
 			message: errorMessage,
 			error: err.errors || err,
 		});
 	}
 
 	res.status(500).json({
-		code: "UnknownError",
+		name: "UnknownError",
+		code: undefined,
 		message: "Something went wrong due to " + errorMessage,
 		error: err,
 	});

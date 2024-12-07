@@ -6,21 +6,17 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 //Sign up route
-
 router.post("/signup", async (req, res, next) => {
 	const { email, password, name } = req.body;
 
 	try {
-		// Check if chosen email is unique
-		const emailAlreadyUsed = await User.findOne({ email });
-		if (emailAlreadyUsed)
-			throw new Error(`Email "${email}" is already used by another user.`);
-
 		const salt = bcryptjs.genSaltSync(12);
 		const hashedPassword = bcryptjs.hashSync(password, salt);
 
 		// |||------------------------------
 		// VVV IF NO USER LETS CREATE A USER
+		// Try creating anyway. MongoDB will return a rejected Promise for us, if email is already in use.
+		// Which then can be handled in our error handler.
 		const newUser = await User.create({
 			email,
 			password: hashedPassword,
@@ -37,7 +33,6 @@ router.post("/signup", async (req, res, next) => {
 });
 
 //Login route
-
 router.post("/login", async (req, res, next) => {
 	const { email, password, name } = req.body;
 	try {
