@@ -30,7 +30,7 @@ function CohortDetailsPage() {
     axios
       .get(`${API_URL}/api/students/cohort/${cohortId}`)
       .then((response) => {
-        const allStudents = response.data;
+        const allStudents = response.data.cohortStudents;
         setStudents(allStudents);
       })
       .catch((error) => console.log(error));

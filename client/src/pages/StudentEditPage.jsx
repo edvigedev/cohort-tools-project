@@ -308,7 +308,7 @@ function StudentEditPage() {
       axios
         .get(`${API_URL}/api/students/${studentId}`)
         .then((response) => {
-          const studentData = response.data;
+          const studentData = response.data.foundStudent;
           setStudent(studentData);
         })
         .catch((error) => console.log(error));

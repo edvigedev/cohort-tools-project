@@ -23,7 +23,7 @@ router.post("/", (req, res) => {
 });
 
 router.get("/", (req, res, next) => {
-	Cohort.find({})
+	Cohort.find(req.query)
 		.then((allCohort) => {
 			res.status(200).json(allCohort);
 		})
